@@ -1,0 +1,9 @@
+# PIP Requirements file
+# Install using $ pip install -r requirements.txt
+Django
+mysql-python
+python-memcached
+django-mysqlpool
+pillow
+uwsgi
+fabric
