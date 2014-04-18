@@ -11,8 +11,24 @@ ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
-
 MANAGERS = ADMINS
+
+DATABASES = { 
+    'default': {
+        'ENGINE': 'django_mysqlpool.backends.mysqlpool',
+        'NAME': '{{ project_name }}',
+        'USER': 'root',
+        'PASSWORD': 'nameLR9969',
+        'PORT': '3306'
+    }
+}
+
+CACHES = { 
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }   
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -174,3 +190,9 @@ LOGGING = {
         } 
     }
 }
+
+import django.conf.global_settings as DEFAULT_SETTINGS
+
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + ( 
+    'django.core.context_processors.request',
+)

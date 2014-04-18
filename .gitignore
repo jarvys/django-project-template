@@ -4,6 +4,7 @@
 *.pyc
 .svn/*
 uploads/
+static
 .coverage
 .env
 
