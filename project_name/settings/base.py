@@ -1,19 +1,15 @@
 # Django settings for {{ project_name }} project.
-import sys, os
+import os
+from os.path import dirname, realpath
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-PROJECT_PATH = os.path.dirname(os.path.realpath(os.path.dirname(__file__)))
-SITE_ROOT = os.path.dirname(PROJECT_PATH)
-
-# App/Library Paths
-sys.path.append(os.path.join(SITE_ROOT, 'apps'))
+BASE_DIR = dirname(dirname(realpath(dirname(__file__))))
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
-
 
 
 MANAGERS = ADMINS
@@ -25,7 +21,7 @@ MANAGERS = ADMINS
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -42,11 +38,11 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(SITE_ROOT, 'uploads')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -57,7 +53,7 @@ MEDIA_URL = '/uploads/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -68,7 +64,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, 'assets'),
+    os.path.join(BASE_DIR, 'assets'),
 )
 
 # List of finder classes that know how to find static files in
@@ -108,7 +104,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, 'templates'),
+    os.path.join(BASE_DIR, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -132,27 +128,49 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
+    'formatters': {
+        'normal': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
         }
     },
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+         'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },  
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'normal'
+        },  
+        'django': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 5,
+            'filename': os.path.join(BASE_DIR, 'logs/django.log',
+            'formatter': 'normal'
+        },
+        'default': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 5,
+            'filename': os.path.join(BASE_DIR, 'logs/default.log'),
+            'formatter': 'normal'
+        } 
     },
     'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
+        'django': {
+            'handlers': ['django'],
+            'propagate': False,
+            'level': 'DEBUG'
+        },  
+        '': {
+            'handlers': ['default'],
+            'level': 'DEBUG'
+        } 
     }
 }
-
-
-# Turn off south during test
-SOUTH_TESTS_MIGRATE = False
