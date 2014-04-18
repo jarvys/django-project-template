@@ -6,3 +6,6 @@
 uploads/
 .coverage
 .env
+
+# .pid file for uwsgi
+.pid
